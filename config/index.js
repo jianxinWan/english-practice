@@ -1,3 +1,7 @@
+/* eslint-disable import/no-commonjs */
+// import router from './router'
+const path = require('path')
+
 const config = {
   projectName: 'english-practice',
   date: '2019-12-2',
@@ -24,13 +28,16 @@ const config = {
       ]
     }
   },
-  defineConstants: {
+  alias: {
+    '@/components': path.resolve(__dirname, '..', 'src/components'),
+    '@/utils': path.resolve(__dirname, '..', 'src/assets/utils'),
+    '@/pages': path.resolve(__dirname, '..', 'src/pages'),
+    '@/images': path.resolve(__dirname, '..', 'src/assets/images'),
   },
+  defineConstants: {},
   copy: {
-    patterns: [
-    ],
-    options: {
-    }
+    patterns: [],
+    options: {}
   },
   weapp: {
     module: {
@@ -70,6 +77,7 @@ const config = {
   h5: {
     publicPath: '/',
     staticDirectory: 'static',
+    esnextModules: ['taro-ui'],
     module: {
       postcss: {
         autoprefixer: {
