@@ -1,3 +1,5 @@
+/* eslint-disable import/no-commonjs */
+// import router from './router'
 const path = require('path')
 
 const config = {
@@ -36,9 +38,11 @@ const config = {
     '@/utils': path.resolve(__dirname, '..', 'src/assets/utils'),
     '@/pages': path.resolve(__dirname, '..', 'src/pages'),
     '@/images': path.resolve(__dirname, '..', 'src/assets/images'),
-    '@/style': path.resolve(__dirname, '..', 'src/assets/style'),
   },
-  defineConstants: {
+  defineConstants: {},
+  copy: {
+    patterns: [],
+    options: {}
   },
   mini: {
     postcss: {
@@ -76,22 +80,25 @@ const config = {
   h5: {
     publicPath: '/',
     staticDirectory: 'static',
-    postcss: {
-      autoprefixer: {
-        enable: true,
-        config: {
-          browsers: [
-            'last 3 versions',
-            'Android >= 4.1',
-            'ios >= 8'
-          ]
-        }
-      },
-      cssModules: {
-        enable: false, // 默认为 false，如需使用 css modules 功能，则设为 true
-        config: {
-          namingPattern: 'module', // 转换模式，取值为 global/module
-          generateScopedName: '[name]__[local]___[hash:base64:5]'
+    esnextModules: ['taro-ui'],
+    module: {
+      postcss: {
+        autoprefixer: {
+          enable: true,
+          config: {
+            browsers: [
+              'last 3 versions',
+              'Android >= 4.1',
+              'ios >= 8'
+            ]
+          }
+        },
+        cssModules: {
+          enable: false, // 默认为 false，如需使用 css modules 功能，则设为 true
+          config: {
+            namingPattern: 'module', // 转换模式，取值为 global/module
+            generateScopedName: '[name]__[local]___[hash:base64:5]'
+          }
         }
       }
     }

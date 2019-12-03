@@ -1,4 +1,4 @@
-import Taro, { useEffect, useCallback } from '@tarojs/taro'
+import Taro, { useEffect } from '@tarojs/taro'
 import { View, Text, Image, Swiper, SwiperItem } from '@tarojs/components'
 import { AtGrid } from "taro-ui"
 import './index.less'
@@ -6,13 +6,6 @@ import './index.less'
 const Index = () => {
   useEffect(() => {
     console.log('special')
-  }, [])
-  const jumpLink = useCallback((item, index) => {
-    if (index === 0) {
-      Taro.navigateTo({
-        url: '/pages/cloze-list/index'
-      })
-    }
   }, [])
   return (
     <View>
@@ -44,16 +37,16 @@ const Index = () => {
       </Swiper>
       <AtGrid
         hasBorder
-        onClick={jumpLink}
+        onClick={(e) => { console.log(e) }}
         data={
           [
             {
               image: 'https://img12.360buyimg.com/jdphoto/s72x72_jfs/t6160/14/2008729947/2754/7d512a86/595c3aeeNa89ddf71.png',
-              value: '完形填空',
+              value: '完形填空'
             },
             {
               image: 'https://img20.360buyimg.com/jdphoto/s72x72_jfs/t15151/308/1012305375/2300/536ee6ef/5a411466N040a074b.png',
-              value: '阅读理解',
+              value: '阅读理解'
             },
             {
               image: 'https://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png',
