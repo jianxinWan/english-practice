@@ -1,7 +1,6 @@
 import Taro, { useEffect, useRouter, useState, useCallback } from '@tarojs/taro'
 import { View, RichText, Block, ScrollView, Text, Button } from '@tarojs/components'
 import {
-  AtNavBar,
   AtRadio,
   AtIcon,
   AtButton,
@@ -10,9 +9,11 @@ import {
   AtModalHeader,
   AtModalContent,
   AtModalAction,
-  AtMessage
+  AtMessage,
+  AtCard,
+  AtAccordion,
 } from 'taro-ui'
-
+import NavBar from '@/components/nav-bar'
 import './index.less'
 
 interface IExerciseInfo {
@@ -30,6 +31,12 @@ interface IOptionInfoItem {
 interface IAnswerItem {
   priority: number
   value: string,
+  iD: string
+}
+
+interface IAnswerCollect {
+  rightArray: number[],
+  errorArray: number[]
 }
 
 let dial = 0 //每道题的占比
@@ -40,6 +47,11 @@ const baseInfo = {
   question_id: 0,
 }
 
+const initAnswerCollect = {
+  rightArray: [],
+  errorArray: []
+}
+
 const Index = () => {
   const router = useRouter()
   const [exerciseInfo, setExerciseInfo] = useState<IExerciseInfo>()
@@ -48,10 +60,17 @@ const Index = () => {
   const [finishPercent, setFinishPercent] = useState<number>(0)
   const [showModal, setShowModel] = useState<boolean>(false)
   const [hasAnswer, setHasAnswer] = useState<boolean>(false)
+  const [showThinking, setShowThinking] = useState<boolean>(false)
+
+  const [answerCollect, setAnswerCollect] = useState<IAnswerCollect>(initAnswerCollect)
 
   const fetchInfo = useCallback(() => {
     const { stem_id } = router.params
     if (!stem_id) return
+    setAnswerCollect({
+      rightArray: [],
+      errorArray: []
+    })
     window.fetch(`http://127.0.0.1:7001/english-practice/api/get-stem/detail/?stem_id=${stem_id}&uid=567876767`)
       .then(res => res.json())
       .then(({ data, msg }) => {
@@ -65,6 +84,7 @@ const Index = () => {
           const item = {
             priority: i + 1,
             value: '',
+            iD: '',
           }
           initAnswer[i] = item
         }
@@ -84,13 +104,40 @@ const Index = () => {
       })
   }, [router.params])
 
+  // 统计成绩
+  const calculateScore = useCallback(() => {
+    if (!hasAnswer) return
+    optionInfo.map((item, index) => {
+      const { option_str } = item
+      const { answerID } = JSON.parse(option_str)
+      let { rightArray, errorArray } = answerCollect
+      if (answerID === answer[index].iD) {
+        rightArray.push(index + 1)
+      } else {
+        errorArray.push(index + 1)
+      }
+      setAnswerCollect({
+        rightArray,
+        errorArray
+      })
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answer, hasAnswer, optionInfo])
+
+  useEffect(() => {
+    calculateScore()
+  }, [calculateScore])
+
   /**
    * 选项点击
    */
-  const optionClick = useCallback((optionValue, index) => {
+
+  const handleOptionClick = useCallback((optionValue, index, item) => {
+    const { iD } = item
     const temp: IAnswerItem = {
       priority: index,
       value: optionValue,
+      iD: iD
     }
     setFinishPercent(finishPercent + dial)
     // 取消选中
@@ -135,34 +182,65 @@ const Index = () => {
   }, [fetchInfo])
 
   if (!exerciseInfo) return
-  const { title_html } = exerciseInfo;
+  const { title_html, thinking } = exerciseInfo;
 
   return (
     <View className='cloze-detail-wrapper'>
       <AtMessage />
       <View className='nav-bar'>
-        <AtNavBar
-          onClickRgIconSt={this.handleClick}
-          onClickRgIconNd={this.handleClick}
-          onClickLeftIcon={this.handleClick}
-          color='#000'
-          title=''
-          leftIconType='chevron-left'
-        >
-        </AtNavBar>
+        <NavBar title='' />
       </View>
+
       <ScrollView className='cloze-content'>
         {title_html && (
           <RichText className='at-article__p exercise-wrapper' nodes={title_html} />
         )}
+        {hasAnswer &&
+          <Block>
+            <AtCard
+              title='答题结果分析'
+              extra='满分：100'
+            >
+              <View className='score-ratio'>
+                成绩占比：
+            </View>
+              <View>
+                成绩：{answerCollect.rightArray.length * (100 / optionInfo.length)}分
+            </View>
+              <View>
+                答对题目数：{answerCollect.rightArray.length}
+              </View>
+              <View>
+                正确题目：{answerCollect.rightArray.join(',')}
+              </View>
+              <View>
+                错误题目：{answerCollect.errorArray.join(',')}
+              </View>
+
+            </AtCard>
+            <AtAccordion
+              title='查看解析：'
+              open={showThinking}
+              onClick={(value: any) => setShowThinking(value)}
+            >
+              <RichText className='at-article__p' nodes={thinking} />
+            </AtAccordion>
+          </Block>
+        }
         {optionInfo && optionInfo.length && optionInfo.map((item, index: number) => {
           const { option_str } = item
-          const { options } = JSON.parse(option_str)
+          const { options, answerID } = JSON.parse(option_str)
+          let answerValue = ''
           const optionArray = options.map((option) => {
-            const { optionText } = option
+            const { optionText, iD } = option
+            if (answerID === iD) {
+              answerValue = optionText
+            }
             return {
               label: optionText,
               value: optionText,
+              iD,
+              disabled: hasAnswer,
             }
           })
           return (
@@ -170,13 +248,26 @@ const Index = () => {
               key={index}
             >
               <View className='top-card'>
-                <AtIcon value='tag' size='20' color='#6190e8' />
-                <Text className='card-text'>option:{index + 1}</Text>
+                <View className='left'>
+                  <AtIcon value='tag' size='20' color='#6190e8' />
+                  <Text className='card-text'>option:{index + 1}</Text>
+                  {hasAnswer && answerID === answer[index].iD && <View className='answer-type' style={{ borderColor: '#13CE66' }}>
+                    <AtIcon value='check' size='12' color='#13CE66'></AtIcon>
+                  </View>}
+                  {hasAnswer && answerID !== answer[index].iD && <View className='answer-type' style={{ borderColor: '#FF4949' }}>
+                    <AtIcon value='close' size='12' color='#FF4949'></AtIcon>
+                  </View>}
+                </View>
+                {hasAnswer && (
+                  <Text>
+                    正确答案: {answerValue}
+                  </Text>
+                )}
               </View>
               <AtRadio
                 options={optionArray}
                 value={answer[index].value}
-                onClick={(optionValue: string) => optionClick(optionValue, index)}
+                onClick={(optionValue: string, optionItem: any) => handleOptionClick(optionValue, index, optionItem)}
               />
             </View>
           )

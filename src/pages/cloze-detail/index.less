@@ -17,10 +17,30 @@
 
   .top-card {
     padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 24px;
 
-    .card-text {
-      font-size: 30px;
-      margin-left: 10px;
+    .left {
+      display: flex;
+      margin: 10px 0;
+
+      .card-text {
+        font-size: 30px;
+        margin-left: 10px;
+      }
+    }
+
+  }
+
+  .score-ratio {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    .at-progress {
+      flex: 1;
     }
   }
 
@@ -38,5 +58,16 @@
     .finish-label {
       font-size: 30px;
     }
+  }
+
+  .answer-type {
+    width: 40px;
+    height: 40px;
+    border: 2px solid;
+    margin-left: 10px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
