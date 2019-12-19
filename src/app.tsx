@@ -3,6 +3,8 @@ import '@tarojs/async-await'
 import Taro, { Component, Config } from '@tarojs/taro'
 import { Provider } from '@tarojs/redux'
 import 'taro-ui/dist/style/index.scss'
+import '@/style/custom-theme.scss'
+import '@/style/taro-ui.css'
 import Index from './pages/index'
 
 import configStore from './store'
@@ -33,6 +35,8 @@ class App extends Component {
       '/pages/score/index',
       '/pages/error-recovery/index',
       '/pages/personal-center/index',
+      '/pages/cloze-list/index',
+      '/pages/cloze-detail/index',
     ],
     window: {
       backgroundTextStyle: 'light',

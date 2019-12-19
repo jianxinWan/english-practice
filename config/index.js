@@ -38,6 +38,7 @@ const config = {
     '@/utils': path.resolve(__dirname, '..', 'src/assets/utils'),
     '@/pages': path.resolve(__dirname, '..', 'src/pages'),
     '@/images': path.resolve(__dirname, '..', 'src/assets/images'),
+    '@/style': path.resolve(__dirname, '..', 'src/assets/style'),
   },
   defineConstants: {},
   copy: {

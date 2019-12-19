@@ -1,7 +1,6 @@
 import Taro, { useEffect, useState, useCallback } from '@tarojs/taro'
 import { View } from '@tarojs/components'
-import NavBar from '@/components/nav-bar'
-import { AtCard } from 'taro-ui'
+import { AtNavBar, AtCard } from 'taro-ui'
 
 import './index.less';
 
@@ -16,6 +15,11 @@ const Index = () => {
         }
       })
   }, [])
+  const returnHandle = useCallback(() => {
+    Taro.navigateTo({
+      url: '/pages/index/index'
+    })
+  }, [])
   const goClozeDetail = useCallback((stem_id) => {
     Taro.navigateTo({
       url: `/pages/cloze-detail/index?stem_id=${stem_id}`
@@ -23,7 +27,14 @@ const Index = () => {
   }, [])
   return (
     <View className='cloze-wrapper'>
-      <NavBar />
+      <AtNavBar
+        // onClickRgIconSt={}
+        // onClickRgIconNd={}
+        onClickLeftIcon={returnHandle}
+        color='#ccc'
+        title=''
+        leftText='<'
+      />
       {
         clozeTest && !!clozeTest.length && clozeTest.map((item, index) => {
           const { type_str, chapter_name, add_time_str, stem_id } = item
