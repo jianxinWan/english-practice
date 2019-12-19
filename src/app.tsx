@@ -3,6 +3,8 @@ import '@tarojs/async-await'
 import Taro, { Component, Config } from '@tarojs/taro'
 import { Provider } from '@tarojs/redux'
 import 'taro-ui/dist/style/index.scss'
+import '@/style/custom-theme.scss'
+import '@/style/taro-ui.css'
 import Index from './pages/index'
 
 import configStore from './store'
@@ -26,12 +28,15 @@ class App extends Component {
    * 对于像 navigationBarTextStyle: 'black' 这样的推导出的类型是 string
    * 提示和声明 navigationBarTextStyle: 'black' | 'white' 类型冲突, 需要显示声明类型
    */
+  // eslint-disable-next-line react/sort-comp
   config: Config = {
     pages: [
       '/pages/index/index',
       '/pages/score/index',
       '/pages/error-recovery/index',
       '/pages/personal-center/index',
+      '/pages/cloze-list/index',
+      '/pages/cloze-detail/index',
     ],
     window: {
       backgroundTextStyle: 'light',
