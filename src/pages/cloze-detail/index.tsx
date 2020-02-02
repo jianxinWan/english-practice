@@ -176,7 +176,6 @@ const Index = () => {
     setShowModel(false)
   }, [answer, fetchInfo])
 
-  // 页面挂载完毕
   useEffect(() => {
     fetchInfo()
   }, [fetchInfo])
