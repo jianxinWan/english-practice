@@ -1,7 +1,7 @@
 {
   "miniprogramRoot": "./dist",
-  "projectname": "english-practice",
-  "description": "考研英语题库",
+  "projectname": "english-pratice2",
+  "description": "英语题库小程序",
   "appid": "touristappid",
   "setting": {
     "urlCheck": true,
