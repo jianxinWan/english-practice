@@ -13,6 +13,11 @@ const Index = () => {
         url: '/pages/cloze-list/index'
       })
     }
+    if (index === 2) {
+      Taro.navigateTo({
+        url: '/pages/writing-list/index'
+      })
+    }
   }, [])
   return (
     <View>

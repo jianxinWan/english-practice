@@ -37,6 +37,8 @@ class App extends Component {
       '/pages/personal-center/index',
       '/pages/cloze-list/index',
       '/pages/cloze-detail/index',
+      '/pages/writing-list/index',
+      '/pages/writing-detail/index',
     ],
     window: {
       backgroundTextStyle: 'light',
