@@ -1,7 +1,9 @@
-import Taro, { useEffect, useCallback } from '@tarojs/taro'
-import { View, Text, Image, Swiper, SwiperItem } from '@tarojs/components'
-import { AtGrid } from "taro-ui"
 import './index.less'
+
+import { Image, Swiper, SwiperItem, Text, View } from '@tarojs/components'
+import Taro, { useCallback, useEffect } from '@tarojs/taro'
+
+import { AtGrid } from "taro-ui"
 
 const Index = () => {
   useEffect(() => {
@@ -11,6 +13,11 @@ const Index = () => {
     if (index === 0) {
       Taro.navigateTo({
         url: '/pages/cloze-list/index'
+      })
+    }
+    if (index === 1) {
+      Taro.navigateTo({
+        url: '/pages/read-list/index'
       })
     }
     if (index === 2) {

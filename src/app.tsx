@@ -1,15 +1,15 @@
 /* eslint-disable no-unused-vars */
 import '@tarojs/async-await'
-import Taro, { Component, Config } from '@tarojs/taro'
-import { Provider } from '@tarojs/redux'
 import 'taro-ui/dist/style/index.scss'
 import '@/style/custom-theme.scss'
 import '@/style/taro-ui.css'
-import Index from './pages/index'
-
-import configStore from './store'
-
 import './app.less'
+
+import Taro, { Component, Config } from '@tarojs/taro'
+
+import Index from './pages/index'
+import { Provider } from '@tarojs/redux'
+import configStore from './store'
 
 // 如果需要在 h5 环境中开启 React Devtools
 // 取消以下注释：
@@ -37,6 +37,8 @@ class App extends Component {
       '/pages/personal-center/index',
       '/pages/cloze-list/index',
       '/pages/cloze-detail/index',
+      '/pages/read-list/index',
+      '/pages/read-detail/index',
       '/pages/writing-list/index',
       '/pages/writing-detail/index',
     ],
