@@ -1,0 +1,33 @@
+.swiper-wrapper {
+
+  background-color: rgba(0, 0, 0, 0.4);
+  width: 100vw;
+
+  .swiper-item {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .swiper-slide {
+      width: 100vw !important;
+      overflow: hidden;
+    }
+
+    .taro-img {
+      width: 100%;
+      height: auto;
+    }
+
+    .swiper-title {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      color: #ffffff;
+      font-weight: 300;
+      letter-spacing: 3px;
+      text-align: center;
+      transform: translate(-50%, -50%);
+    }
+  }
+}

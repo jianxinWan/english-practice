@@ -4,14 +4,15 @@ import Taro, {
   useState,
   useCallback
 } from "@tarojs/taro";
-import { View, RichText, ScrollView } from "@tarojs/components";
+import { View, RichText } from "@tarojs/components";
 import {
   AtTextarea,
   AtMessage,
   AtButton,
   AtTabBar,
   AtImagePicker,
-  AtModal
+  AtModal,
+  AtAccordion
 } from "taro-ui";
 import NavBar from "@/components/nav-bar";
 import "./index.scss";
@@ -19,46 +20,41 @@ import fetch from "@/utils/fetch";
 
 interface IExerciseInfo {
   thinking: string;
-  title_html: string;
+  titleHTML: string;
+  answer: string
 }
 
 const baseInfo = {
-  stem_id: 0,
-  chapter_id: 0,
-  question_id: 0
+  stem_id: 1,
+  chapter_id: 1,
+  question_id: 1
 };
 
 const Index = () => {
   const router = useRouter();
   const [exerciseInfo, setExerciseInfo] = useState<IExerciseInfo>();
   const [hasAnswer, setHasAnswer] = useState<boolean>(false);
+  const [showThinking, setShowThinking] = useState<boolean>(true);
   const [textVal, setTextVal] = useState<string>("");
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [imageFiles, setImageFiles] = useState<any>([]);
   const [confirmSubmit, setConfirmSubmit] = useState<boolean>(false);
   const fetchInfo = useCallback(() => {
-    const { stem_id } = router.params;
-    if (!stem_id) return;
-
+    const { show_type_id } = router.params;
+    if (!show_type_id) return;
     fetch({
-      url: `http://127.0.0.1:7001/english-practice/api/get-stem/detail/?stem_id=${stem_id}&uid=567876767`
-    }).then(({ data, msg }) => {
-      if (msg !== "success") {
+      url: `http://127.0.0.1:7001/english-practice/api/spider/translation/detail/?show_type_id=${show_type_id}&uid=567876767`
+    }).then(({ data,status}) => {
+      if (status !== 200) {
         return;
       }
-      const {
-        stem_parent_questions,
-        stem_child_questions,
-        user_answer_info
-      } = data;
-      if (!stem_parent_questions.length) return;
-
-      const { chapter_id, question_id } = stem_parent_questions[0];
-      baseInfo.stem_id = parseInt(stem_id, 10);
-      baseInfo.chapter_id = chapter_id;
-      baseInfo.question_id = question_id;
-      setExerciseInfo(stem_parent_questions[0]);
+      const { quesNormalData,user_answer_info } = data
+      const { jsonStr } = quesNormalData[0]
+      baseInfo.stem_id = parseInt(show_type_id, 10);
+      setExerciseInfo(JSON.parse(jsonStr))
+      console.log(user_answer_info)
       if (user_answer_info) {
+        console.log(user_answer_info)
         const { answer_array } = user_answer_info;
         const answer = JSON.parse(answer_array);
         setTextVal(answer[0].value);
@@ -72,36 +68,34 @@ const Index = () => {
    * 提交答题信息
    */
   const handleSubmit = useCallback(() => {
-    window
-      .fetch("http://127.0.0.1:7001/english-practice/api/answer/submit/", {
-        method: "POST",
-        // credentials: 'include',
-        body: JSON.stringify({
-          uid: "567876767",
-          answer_array: [
-            {
-              type: "text",
-              value: textVal
-            },
-            {
-              type: "images",
-              value: imageFiles
-            }
-          ],
-          ...baseInfo
-        }),
-        headers: {
-          "content-type": "application/json"
-        }
-      })
-      .then(res => res.json())
-      .then(({ msg, prompt }) => {
-        fetchInfo();
-        setConfirmSubmit(false);
-        Taro.atMessage({
-          message: prompt,
-          type: msg
-        });
+    fetch({
+      url: "http://127.0.0.1:7001/english-practice/api/answer/submit/",
+      method: "POST",
+      params: JSON.stringify({
+        uid: "567876767",
+        answer_array: [
+          {
+            type: "text",
+            value: textVal
+          },
+          {
+            type: "images",
+            value: imageFiles
+          }
+        ],
+        ...baseInfo
+      }),
+      headers: {
+        "content-type": "application/json"
+      }
+    }).then(({ msg, prompt }) => {
+      setConfirmSubmit(false);
+      console.log(msg, prompt)
+        // fetchInfo();
+        // Taro.atMessage({
+        //   message: prompt,
+        //   type: msg
+        // });
       });
   }, [fetchInfo, textVal, imageFiles]);
 
@@ -120,7 +114,7 @@ const Index = () => {
   }, [fetchInfo]);
 
   if (!exerciseInfo) return;
-  const { title_html, thinking } = exerciseInfo;
+  const { titleHTML, answer } = exerciseInfo;
 
   return (
     <View className="writing-detail-wrapper ">
@@ -128,12 +122,11 @@ const Index = () => {
       <View className="nav-bar">
         <NavBar title="" />
       </View>
-
-      <ScrollView className="writing-content">
-        {title_html && (
+      <View className="writing-content" style={{padding: "0 5px 30px"}}>
+        {titleHTML && (
           <RichText
             className="at-article__p exercise-wrapper"
-            nodes={title_html}
+            nodes={titleHTML}
           />
         )}
         <View className="answer-wrapper">
@@ -151,7 +144,7 @@ const Index = () => {
               count={true}
               maxLength={2000}
               value={textVal}
-              onChange={(event: any) => setTextVal(event.target.value)}
+              onChange={(val: string) => setTextVal(val)}
               placeholder="Answer here"
             />
           )}
@@ -168,12 +161,22 @@ const Index = () => {
             />
           )}
         </View>
+        {hasAnswer && 
+          <AtAccordion
+          title="查看解析："
+          open={showThinking}
+          onClick={(value: any) => setShowThinking(value)}
+        >
+          <RichText className="at-article__p" nodes={answer} />
+        </AtAccordion>
+        }
+      
         {!hasAnswer && (
           <AtButton type="primary" onClick={() => setConfirmSubmit(true)}>
             提交答案
           </AtButton>
         )}
-      </ScrollView>
+      </View>
       <AtModal
         isOpened={confirmSubmit}
         title="确认提交"

@@ -1,0 +1,17 @@
+.index {
+  width: 100%;
+  height: calc(100vh - 96px);
+  padding-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+
+  .content {
+    flex: 1;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.at-tab-bar__item {
+  padding-top: 0;
+}

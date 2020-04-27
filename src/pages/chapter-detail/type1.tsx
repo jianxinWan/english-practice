@@ -1,6 +1,5 @@
 import Taro, {
   useEffect,
-  useRouter,
   useState,
   useCallback
 } from "@tarojs/taro";
@@ -8,26 +7,17 @@ import {
   View,
   RichText,
   Block,
-  ScrollView,
   Text,
-  Button
 } from "@tarojs/components";
 import {
   AtRadio,
   AtIcon,
   AtButton,
-  AtProgress,
-  AtModal,
-  AtModalHeader,
-  AtModalContent,
-  AtModalAction,
   AtMessage,
   AtCard,
   AtAccordion
 } from "taro-ui";
-import NavBar from "@/components/nav-bar";
-import fetch from "@/utils/fetch";
-import "./index.scss";
+
 
 interface IExerciseInfo {
   thinking: string;
@@ -52,7 +42,6 @@ interface IAnswerCollect {
   errorArray: number[];
 }
 
-let dial = 0; //每道题的占比
 
 const baseInfo = {
   stem_id: 0,
@@ -65,13 +54,17 @@ const initAnswerCollect = {
   errorArray: []
 };
 
-const Index = () => {
-  const router = useRouter();
+export interface IProps {
+  data: any
+  finishCallback: () => void
+  onChange: (current:number,ans: IAnswerItem[]) => void
+  toNext: (current:number) => void
+}
+
+const Type1 = ({ data,toNext,onChange}:IProps) => {
   const [exerciseInfo, setExerciseInfo] = useState<IExerciseInfo>();
   const [optionInfo, setOptionInfo] = useState<IOptionInfoItem[]>([]);
   const [answer, setAnswer] = useState<IAnswerItem[]>([]);
-  const [finishPercent, setFinishPercent] = useState<number>(0);
-  const [showModal, setShowModel] = useState<boolean>(false);
   const [hasAnswer, setHasAnswer] = useState<boolean>(false);
   const [showThinking, setShowThinking] = useState<boolean>(false);
 
@@ -79,25 +72,16 @@ const Index = () => {
     initAnswerCollect
   );
 
-  const fetchInfo = useCallback(() => {
-    const { stem_id } = router.params;
-    if (!stem_id) return;
-    setAnswerCollect({
-      rightArray: [],
-      errorArray: []
-    });
-    fetch({
-      url: `http://127.0.0.1:7001/english-practice/api/get-stem/detail/?stem_id=${stem_id}&uid=567876767`
-    }).then(({ data, msg }) => {
-      if (msg !== "success") {
-        return;
-      }
-      const {
-        stem_parent_questions,
-        stem_child_questions,
-        user_answer_info
-      } = data;
-      if (!stem_parent_questions.length || !stem_child_questions.length) return;
+  const dealWithData = (data) => {
+    const {
+      stem_parent_questions,
+      stem_child_questions,
+      user_answer_info,
+      stem_id
+    } = data;
+    console.log(stem_parent_questions[0])
+    if (!stem_parent_questions.length || !stem_child_questions.length) return;
+    try {
       const initAnswer: IAnswerItem[] = [];
       for (let i = 0; i < stem_child_questions.length; i++) {
         const item = {
@@ -107,21 +91,23 @@ const Index = () => {
         };
         initAnswer[i] = item;
       }
-      dial = 100 / stem_child_questions.length;
+      setExerciseInfo(stem_parent_questions[0]);
+      setOptionInfo(stem_child_questions);
       const { chapter_id, question_id } = stem_parent_questions[0];
       baseInfo.stem_id = parseInt(stem_id, 10);
       baseInfo.chapter_id = chapter_id;
       baseInfo.question_id = question_id;
       setAnswer(initAnswer);
-      setExerciseInfo(stem_parent_questions[0]);
-      setOptionInfo(stem_child_questions);
+    
       if (user_answer_info) {
         const { answer_array } = user_answer_info;
         setAnswer(JSON.parse(answer_array));
         setHasAnswer(true);
       }
-    });
-  }, [router.params]);
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   // 统计成绩
   const calculateScore = useCallback(() => {
@@ -142,11 +128,6 @@ const Index = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answer, hasAnswer, optionInfo]);
-
-  useEffect(() => {
-    calculateScore();
-  }, [calculateScore]);
-
   /**
    * 选项点击
    */
@@ -159,63 +140,42 @@ const Index = () => {
         value: optionValue,
         iD: iD
       };
-      setFinishPercent(finishPercent + dial);
       // 取消选中
       if (optionValue === answer[index].value) {
         temp.value = "";
-        setFinishPercent(finishPercent - dial);
       }
       setAnswer([...answer.slice(0, index), temp, ...answer.slice(index + 1)]);
     },
-    [answer, finishPercent]
+    [answer]
   );
 
-  /**
-   * 提交答题信息
-   */
-  const handleSubmit = useCallback(() => {
-    window
-      .fetch("http://127.0.0.1:7001/english-practice/api/answer/submit/", {
-        method: "POST",
-        // credentials: 'include',
-        body: JSON.stringify({
-          uid: "567876767",
-          answer_array: answer,
-          ...baseInfo
-        }),
-        headers: {
-          "content-type": "application/json"
-        }
-      })
-      .then(res => res.json())
-      .then(({ msg, prompt }) => {
-        fetchInfo();
-        Taro.atMessage({
-          message: prompt,
-          type: msg
-        });
-      });
-    setShowModel(false);
-  }, [answer, fetchInfo]);
+  useEffect(() => {
+    calculateScore();
+  }, [calculateScore]);
 
   useEffect(() => {
-    fetchInfo();
-  }, [fetchInfo]);
+    dealWithData(data)
+  }, []);
 
-  if (!exerciseInfo) return;
+  useEffect(() => {
+    onChange(1,answer)
+  },[answer])
+
+  if (!exerciseInfo) return null;
   const { title_html, thinking } = exerciseInfo;
 
   return (
-    <View className="cloze-detail-wrapper">
+    <View className="cloze-detail-wrapper" >
       <AtMessage />
-      <View className="nav-bar">
-        <NavBar title="" />
-      </View>
-
-      <ScrollView className="cloze-content">
+      <View className="cloze-content">
         {title_html && (
           <RichText
-            className="at-article__p exercise-wrapper"
+            style={{
+              margin: '.53333rem .64rem 0',
+              color: '#666',
+              fontSize: '.59733rem',
+              lineHeight: '.896rem',
+            }}
             nodes={title_html}
           />
         )}
@@ -236,7 +196,15 @@ const Index = () => {
               open={showThinking}
               onClick={(value: any) => setShowThinking(value)}
             >
-              <RichText className="at-article__p" nodes={thinking} />
+              <RichText
+                style={{
+                  margin: '.53333rem .64rem 0',
+                  color: '#666',
+                  fontSize: '.59733rem',
+                  lineHeight: '.896rem',
+                }}
+                nodes={thinking}
+              />
             </AtAccordion>
           </Block>
         )}
@@ -303,39 +271,14 @@ const Index = () => {
           })}
         {!hasAnswer && (
           <Block>
-            <View className="finish-progress">
-              <Text className="finish-label">完成度:</Text>
-              <AtProgress
-                percent={finishPercent}
-                color={
-                  finishPercent < 30
-                    ? "#FF4949"
-                    : finishPercent < 60 && finishPercent > 30
-                    ? "#FFC82C"
-                    : "#13CE66"
-                }
-              />
-            </View>
-            <AtModal isOpened={showModal}>
-              <AtModalHeader>提交</AtModalHeader>
-              <AtModalContent>
-                {finishPercent > 99 && "题目已全部作答，确认提交？"}
-                {finishPercent < 99 &&
-                  `当前你的完成度为${finishPercent}%，确认提交？`}
-              </AtModalContent>
-              <AtModalAction>
-                <Button onClick={() => setShowModel(false)}>取消</Button>
-                <Button onClick={handleSubmit}>确定</Button>
-              </AtModalAction>
-            </AtModal>
-            <AtButton type="primary" onClick={() => setShowModel(true)}>
-              提交
+            <AtButton type="primary" onClick={() => { toNext(1)}}>
+              下一题
             </AtButton>
           </Block>
         )}
-      </ScrollView>
+      </View>
     </View>
   );
 };
 
-export default Index;
+export default Type1;

@@ -1,0 +1,21 @@
+.writing-detail-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .nav-bar {
+    flex-shrink: 0;
+  }
+
+  .writing-content {
+    flex: 1;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+
+    .answer-wrapper {
+      padding: 20px 10px;
+    }
+  }
+}

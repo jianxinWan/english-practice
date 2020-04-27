@@ -6,19 +6,14 @@ import {
   AtCheckbox,
   AtIcon,
   AtMessage,
-  AtModal
 } from "taro-ui";
-import { RichText, ScrollView, Text, View } from "@tarojs/components";
+import { RichText, Text, View } from "@tarojs/components";
 import Taro, {
   useCallback,
   useEffect,
-  useRouter,
   useState
 } from "@tarojs/taro";
-
-import NavBar from "@/components/nav-bar";
-import fetch from "@/utils/fetch";
-
+import {IProps } from './type1'
 interface IExerciseInfo {
   thinking: string;
   title_html: string;
@@ -45,8 +40,7 @@ const baseInfo = {
   question_id: 0
 };
 
-const Index = () => {
-  const router = useRouter();
+const Index = ({ data,toNext,onChange}:IProps) => {
   const [exerciseInfo, setExerciseInfo] = useState<IExerciseInfo>();
   const [hasAnswer, setHasAnswer] = useState<boolean>(false);
   const [confirmSubmit, setConfirmSubmit] = useState<boolean>(false);
@@ -58,40 +52,30 @@ const Index = () => {
   const [rightQues, setRightQues] = useState<string[]>([]);
   const [wrongQues, setWrongQues] = useState<string[]>([]);
 
-  const fetchInfo = useCallback(() => {
-    const { stem_id } = router.params;
-    if (!stem_id) return;
-
-    fetch({
-      url: `http://127.0.0.1:7001/english-practice/api/get-stem/detail/?stem_id=${stem_id}&uid=567876767`
-    }).then(({ data, msg }) => {
-      if (msg !== "success") {
-        return;
-      }
-      const {
-        stem_parent_questions,
-        stem_child_questions,
-        user_answer_info
-      } = data;
-      if (!stem_parent_questions.length || !stem_child_questions.length) return;
-      // 处理选项数组
-      setOptionArr(stem_child_questions);
-      // 父选项
-      const { chapter_id, id, question_id } = stem_parent_questions[0];
-      baseInfo.stem_id = parseInt(stem_id, 10);
-      baseInfo.chapter_id = chapter_id;
-      baseInfo.question_id = question_id;
-      setParentId(id);
-      setExerciseInfo(stem_parent_questions[0]);
-      if (user_answer_info) {
-        const { answer_array } = user_answer_info;
-        console.log("4");
-        setHasAnswer(true);
-        setUserSelect(JSON.parse(answer_array));
-        countScore(stem_child_questions, id);
-      }
-    });
-  }, []);
+  const dealWithData = (data) => {
+    const {
+      stem_parent_questions,
+      stem_child_questions,
+      user_answer_info,
+      stem_id
+    } = data;
+    if (!stem_parent_questions.length || !stem_child_questions.length) return;
+    // 处理选项数组
+    setOptionArr(stem_child_questions);
+    // 父选项
+    const { chapter_id, id, question_id } = stem_parent_questions[0];
+    baseInfo.stem_id = parseInt(stem_id, 10);
+    baseInfo.chapter_id = chapter_id;
+    baseInfo.question_id = question_id;
+    setParentId(id);
+    setExerciseInfo(stem_parent_questions[0]);
+    if (user_answer_info) {
+      const { answer_array } = user_answer_info;
+      setHasAnswer(true);
+      setUserSelect(JSON.parse(answer_array));
+      countScore(stem_child_questions, id);
+    }
+  }
 
   /**
    * 提交答题信息
@@ -112,18 +96,17 @@ const Index = () => {
       })
       .then(res => res.json())
       .then(({ msg, prompt }) => {
-        fetchInfo();
         setConfirmSubmit(false);
         Taro.atMessage({
           message: prompt,
           type: msg
         });
       });
-  }, [fetchInfo]);
+  }, []);
 
   useEffect(() => {
-    fetchInfo();
-  }, [fetchInfo]);
+    dealWithData(data)
+  }, []);
 
   /** 统计成绩 */
 
@@ -170,19 +153,21 @@ const Index = () => {
     setShowThinking(!showThinking);
   };
 
-  if (!exerciseInfo) return;
+  if (!exerciseInfo) return null;
   const { title_html, thinking } = exerciseInfo;
 
   return (
     <View className="writing-detail-wrapper ">
       <AtMessage />
-      <View className="nav-bar">
-        <NavBar title="" />
-      </View>
-      <ScrollView className="writing-content">
+      <View className="writing-content">
         {title_html && (
           <RichText
-            className="at-article__p exercise-wrapper"
+            style={{
+              margin: '.53333rem .64rem 0',
+              color: '#666',
+              fontSize: '.59733rem',
+              lineHeight: '.896rem',
+            }}
             nodes={title_html}
           />
         )}
@@ -204,18 +189,23 @@ const Index = () => {
             </AtButton>
             {showThinking && (
               <RichText
-                className="at-article__p exercise-wrapper"
+                style={{
+                  margin: '.53333rem .64rem 0',
+                  color: '#666',
+                  fontSize: '.59733rem',
+                  lineHeight: '.896rem',
+                }}
                 nodes={thinking}
               />
             )}
           </View>
         )}
-        {optionsArr &&
+        {/* {optionsArr &&
           optionsArr.length &&
           optionsArr.map((item, index) => {
-            const { parent_id, title_html, option_str } = item;
+            const { parent_id, title_html,option_str } = item;
             const { options } = JSON.parse(option_str);
-            if (parentId !== parent_id) return;
+            if (parentId !== parent_id) return null;
             const optionArray = options.map(option => {
               const { optionText, iD } = option;
               return {
@@ -226,10 +216,10 @@ const Index = () => {
               };
             });
             return (
-              <View key={`${index}`}>
+              <View>
                 <View>
                   <AtIcon value="tag" size="20" color="#6190e8" />
-                  <Text className="child-tit">{title_html}</Text>
+                  <Text className="child-tit">{item.title_html}</Text>
                 </View>
                 <AtCheckbox
                   options={optionArray}
@@ -240,22 +230,11 @@ const Index = () => {
                 />
               </View>
             );
-          })}
-        {!hasAnswer && (
-          <AtButton type="primary" onClick={() => setConfirmSubmit(true)}>
-            提交答案
-          </AtButton>
-        )}
-      </ScrollView>
-      <AtModal
-        isOpened={confirmSubmit}
-        title="确认提交"
-        cancelText="取消"
-        confirmText="确认"
-        onClose={() => setConfirmSubmit(false)}
-        onCancel={() => setConfirmSubmit(false)}
-        onConfirm={() => handleSubmit()}
-      />
+          })} */}
+        <AtButton type="primary" onClick={() => { toNext(2)}}>
+            下一题
+        </AtButton>
+      </View>
     </View>
   );
 };
