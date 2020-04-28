@@ -71,10 +71,25 @@ function submitAnswer(params) {
   });
 }
 
+/**
+ * 获取套题列表
+ * @param type
+ */
+function getExerciseList(type) {
+  return fetch({
+    url: `${baseUrl}exercise/list/?type=${type}`
+  }).then(({ data, msg }) => {
+    if (msg === "success") {
+      return data;
+    }
+  });
+}
+
 export {
   getStemList,
   getTranslation,
   getStemDetail,
   submitAnswer,
-  getTranslationDetail
+  getTranslationDetail,
+  getExerciseList
 };

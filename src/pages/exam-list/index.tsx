@@ -2,19 +2,14 @@ import Taro, { useEffect, useState, useCallback } from "@tarojs/taro";
 import { View } from "@tarojs/components";
 import NavBar from "@/components/nav-bar";
 import { AtCard } from "taro-ui";
-import fetch from "@/utils/fetch";
-
+import { getExerciseList } from "@/api/index";
 import "./index.scss";
 
 const Index = () => {
   const [chapterList, setChapterList] = useState([]);
   useEffect(() => {
-    fetch({
-      url: "http://127.0.0.1:7001/english-practice/api/exercise/list/?type=2"
-    }).then(({ data, msg }) => {
-      if (msg === "success") {
-        setChapterList(data);
-      }
+    getExerciseList(2).then((data) => {
+      setChapterList(data);
     });
   }, []);
   const goWritingDetail = useCallback((stem_list_id) => {
