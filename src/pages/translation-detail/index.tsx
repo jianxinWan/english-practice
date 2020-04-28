@@ -16,8 +16,9 @@ import {
 } from "taro-ui";
 import NavBar from "@/components/nav-bar";
 import "./index.scss";
-import fetch from "@/utils/fetch";
-
+import { getTranslationDetail, submitAnswer } from "@/api/index";
+let userId;
+import { getStorage } from "@/utils/localstroage";
 interface IExerciseInfo {
   thinking: string;
   titleHTML: string;
@@ -41,26 +42,30 @@ const Index = () => {
   const [confirmSubmit, setConfirmSubmit] = useState<boolean>(false);
   const fetchInfo = useCallback(() => {
     const { show_type_id } = router.params;
+    console.log(show_type_id);
     if (!show_type_id) return;
-    fetch({
-      url: `http://127.0.0.1:7001/english-practice/api/spider/translation/detail/?show_type_id=${show_type_id}&uid=567876767`
-    }).then(({ data, status }) => {
-      if (status !== 200) {
-        return;
-      }
-      const { quesNormalData, user_answer_info } = data;
-      const { jsonStr } = quesNormalData[0];
-      baseInfo.stem_id = parseInt(show_type_id, 10);
-      setExerciseInfo(JSON.parse(jsonStr));
-      console.log(user_answer_info);
-      if (user_answer_info) {
+    getStorage("userId").then(({ data }) => {
+      userId = data;
+      console.log("data", data);
+      getTranslationDetail(show_type_id, data).then(({ data, status }) => {
+        console.log(data, status);
+        if (status !== 200) {
+          return;
+        }
+        const { quesNormalData, user_answer_info } = data;
+        const { jsonStr } = quesNormalData[0];
+        baseInfo.stem_id = parseInt(show_type_id, 10);
+        setExerciseInfo(JSON.parse(jsonStr));
         console.log(user_answer_info);
-        const { answer_array } = user_answer_info;
-        const answer = JSON.parse(answer_array);
-        setTextVal(answer[0].value);
-        setImageFiles(answer[1].value);
-        setHasAnswer(true);
-      }
+        if (user_answer_info) {
+          console.log(user_answer_info);
+          const { answer_array } = user_answer_info;
+          const answer = JSON.parse(answer_array);
+          setTextVal(answer[0].value);
+          setImageFiles(answer[1].value);
+          setHasAnswer(true);
+        }
+      });
     });
   }, [router.params]);
 
@@ -68,34 +73,25 @@ const Index = () => {
    * 提交答题信息
    */
   const handleSubmit = useCallback(() => {
-    fetch({
-      url: "http://127.0.0.1:7001/english-practice/api/answer/submit/",
-      method: "POST",
-      params: JSON.stringify({
-        uid: "567876767",
-        answer_array: [
-          {
-            type: "text",
-            value: textVal
-          },
-          {
-            type: "images",
-            value: imageFiles
-          }
-        ],
-        ...baseInfo
-      }),
-      headers: {
-        "content-type": "application/json"
-      }
+    submitAnswer({
+      uid: userId,
+      answer_array: [
+        {
+          type: "text",
+          value: textVal
+        },
+        {
+          type: "images",
+          value: imageFiles
+        }
+      ],
+      ...baseInfo
     }).then(({ msg, prompt }) => {
+      Taro.atMessage({
+        message: prompt,
+        type: msg
+      });
       setConfirmSubmit(false);
-      console.log(msg, prompt);
-      // fetchInfo();
-      // Taro.atMessage({
-      //   message: prompt,
-      //   type: msg
-      // });
     });
   }, [fetchInfo, textVal, imageFiles]);
 

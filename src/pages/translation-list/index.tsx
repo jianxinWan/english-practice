@@ -10,8 +10,8 @@ const Index = () => {
   const [translation, setTranslation] = useState([]);
 
   useEffect(() => {
-    getTranslation().then((data) => {
-      setTranslation(data);
+    getTranslation().then(({ list }) => {
+      setTranslation(list);
     });
   }, []);
 

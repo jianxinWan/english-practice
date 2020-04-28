@@ -15,8 +15,8 @@ import {
 } from "taro-ui";
 import NavBar from "@/components/nav-bar";
 import "./index.scss";
-import fetch from "@/utils/fetch";
-
+import { getStemDetail, submitAnswer } from "@/api/index";
+import { getStorage } from "@/utils/localstroage";
 interface IExerciseInfo {
   thinking: string;
   title_html: string;
@@ -27,6 +27,7 @@ const baseInfo = {
   chapter_id: 0,
   question_id: 0
 };
+let userId;
 
 const Index = () => {
   const router = useRouter();
@@ -39,32 +40,24 @@ const Index = () => {
   const fetchInfo = useCallback(() => {
     const { stem_id } = router.params;
     if (!stem_id) return;
-
-    fetch({
-      url: `http://127.0.0.1:7001/english-practice/api/get-stem/detail/?stem_id=${stem_id}&uid=567876767`
-    }).then(({ data, msg }) => {
-      if (msg !== "success") {
-        return;
-      }
-      const {
-        stem_parent_questions,
-        stem_child_questions,
-        user_answer_info
-      } = data;
-      if (!stem_parent_questions.length) return;
-
-      const { chapter_id, question_id } = stem_parent_questions[0];
-      baseInfo.stem_id = parseInt(stem_id, 10);
-      baseInfo.chapter_id = chapter_id;
-      baseInfo.question_id = question_id;
-      setExerciseInfo(stem_parent_questions[0]);
-      if (user_answer_info) {
-        const { answer_array } = user_answer_info;
-        const answer = JSON.parse(answer_array);
-        setTextVal(answer[0].value);
-        setImageFiles(answer[1].value);
-        setHasAnswer(true);
-      }
+    getStorage("userId").then(({ data }) => {
+      userId = data;
+      getStemDetail(stem_id, data).then((data) => {
+        const { stem_parent_questions, user_answer_info } = data;
+        if (!stem_parent_questions.length) return;
+        const { chapter_id, question_id } = stem_parent_questions[0];
+        baseInfo.stem_id = parseInt(stem_id, 10);
+        baseInfo.chapter_id = chapter_id;
+        baseInfo.question_id = question_id;
+        setExerciseInfo(stem_parent_questions[0]);
+        if (user_answer_info) {
+          const { answer_array } = user_answer_info;
+          const answer = JSON.parse(answer_array);
+          setTextVal(answer[0].value);
+          setImageFiles(answer[1].value);
+          setHasAnswer(true);
+        }
+      });
     });
   }, [router.params]);
 
@@ -72,37 +65,27 @@ const Index = () => {
    * 提交答题信息
    */
   const handleSubmit = useCallback(() => {
-    window
-      .fetch("http://127.0.0.1:7001/english-practice/api/answer/submit/", {
-        method: "POST",
-        // credentials: 'include',
-        body: JSON.stringify({
-          uid: "567876767",
-          answer_array: [
-            {
-              type: "text",
-              value: textVal
-            },
-            {
-              type: "images",
-              value: imageFiles
-            }
-          ],
-          ...baseInfo
-        }),
-        headers: {
-          "content-type": "application/json"
+    submitAnswer({
+      uid: "567876767",
+      answer_array: [
+        {
+          type: "text",
+          value: textVal
+        },
+        {
+          type: "images",
+          value: imageFiles
         }
-      })
-      .then((res) => res.json())
-      .then(({ msg, prompt }) => {
-        fetchInfo();
-        setConfirmSubmit(false);
-        Taro.atMessage({
-          message: prompt,
-          type: msg
-        });
+      ],
+      ...baseInfo
+    }).then(({ msg, prompt }) => {
+      fetchInfo();
+      setConfirmSubmit(false);
+      Taro.atMessage({
+        message: prompt,
+        type: msg
       });
+    });
   }, [fetchInfo, textVal, imageFiles]);
 
   /**
@@ -151,7 +134,9 @@ const Index = () => {
               count={true}
               maxLength={2000}
               value={textVal}
-              onChange={(event: any) => setTextVal(event.target.value)}
+              onChange={(val: string) => {
+                setTextVal(val);
+              }}
               placeholder="Answer here"
             />
           )}

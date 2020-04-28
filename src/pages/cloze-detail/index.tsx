@@ -4,14 +4,7 @@ import Taro, {
   useState,
   useCallback
 } from "@tarojs/taro";
-import {
-  View,
-  RichText,
-  Block,
-  ScrollView,
-  Text,
-  Button
-} from "@tarojs/components";
+import { View, RichText, Block, Text, Button } from "@tarojs/components";
 import {
   AtRadio,
   AtIcon,
@@ -26,7 +19,8 @@ import {
   AtAccordion
 } from "taro-ui";
 import NavBar from "@/components/nav-bar";
-import fetch from "@/utils/fetch";
+import { getStemDetail, submitAnswer } from "@/api/index";
+import { getStorage } from "@/utils/localstroage";
 import "./index.scss";
 
 interface IExerciseInfo {
@@ -65,6 +59,8 @@ const initAnswerCollect = {
   errorArray: []
 };
 
+let userId;
+
 const Index = () => {
   const router = useRouter();
   const [exerciseInfo, setExerciseInfo] = useState<IExerciseInfo>();
@@ -86,40 +82,40 @@ const Index = () => {
       rightArray: [],
       errorArray: []
     });
-    fetch({
-      url: `http://127.0.0.1:7001/english-practice/api/get-stem/detail/?stem_id=${stem_id}&uid=567876767`
-    }).then(({ data, msg }) => {
-      if (msg !== "success") {
-        return;
-      }
-      const {
-        stem_parent_questions,
-        stem_child_questions,
-        user_answer_info
-      } = data;
-      if (!stem_parent_questions.length || !stem_child_questions.length) return;
-      const initAnswer: IAnswerItem[] = [];
-      for (let i = 0; i < stem_child_questions.length; i++) {
-        const item = {
-          priority: i + 1,
-          value: "",
-          iD: ""
-        };
-        initAnswer[i] = item;
-      }
-      dial = 100 / stem_child_questions.length;
-      const { chapter_id, question_id } = stem_parent_questions[0];
-      baseInfo.stem_id = parseInt(stem_id, 10);
-      baseInfo.chapter_id = chapter_id;
-      baseInfo.question_id = question_id;
-      setAnswer(initAnswer);
-      setExerciseInfo(stem_parent_questions[0]);
-      setOptionInfo(stem_child_questions);
-      if (user_answer_info) {
-        const { answer_array } = user_answer_info;
-        setAnswer(JSON.parse(answer_array));
-        setHasAnswer(true);
-      }
+
+    getStorage("userId").then(({ data }) => {
+      userId = data;
+      getStemDetail(stem_id, data).then((data) => {
+        const {
+          stem_parent_questions,
+          stem_child_questions,
+          user_answer_info
+        } = data;
+        if (!stem_parent_questions.length || !stem_child_questions.length)
+          return;
+        const initAnswer: IAnswerItem[] = [];
+        for (let i = 0; i < stem_child_questions.length; i++) {
+          const item = {
+            priority: i + 1,
+            value: "",
+            iD: ""
+          };
+          initAnswer[i] = item;
+        }
+        dial = 100 / stem_child_questions.length;
+        const { chapter_id, question_id } = stem_parent_questions[0];
+        baseInfo.stem_id = parseInt(stem_id, 10);
+        baseInfo.chapter_id = chapter_id;
+        baseInfo.question_id = question_id;
+        setAnswer(initAnswer);
+        setExerciseInfo(stem_parent_questions[0]);
+        setOptionInfo(stem_child_questions);
+        if (user_answer_info) {
+          const { answer_array } = user_answer_info;
+          setAnswer(JSON.parse(answer_array));
+          setHasAnswer(true);
+        }
+      });
     });
   }, [router.params]);
 
@@ -174,27 +170,18 @@ const Index = () => {
    * 提交答题信息
    */
   const handleSubmit = useCallback(() => {
-    window
-      .fetch("http://127.0.0.1:7001/english-practice/api/answer/submit/", {
-        method: "POST",
-        // credentials: 'include',
-        body: JSON.stringify({
-          uid: "567876767",
-          answer_array: answer,
-          ...baseInfo
-        }),
-        headers: {
-          "content-type": "application/json"
-        }
-      })
-      .then((res) => res.json())
-      .then(({ msg, prompt }) => {
-        fetchInfo();
-        Taro.atMessage({
-          message: prompt,
-          type: msg
-        });
+    const params = {
+      uid: userId,
+      answer_array: answer,
+      ...baseInfo
+    };
+    submitAnswer(params).then(({ msg, prompt }) => {
+      fetchInfo();
+      Taro.atMessage({
+        message: prompt,
+        type: msg
       });
+    });
     setShowModel(false);
   }, [answer, fetchInfo]);
 
@@ -212,7 +199,7 @@ const Index = () => {
         <NavBar title="" />
       </View>
 
-      <ScrollView className="cloze-content">
+      <View className="cloze-content">
         {title_html && (
           <RichText
             className="at-article__p exercise-wrapper"
@@ -333,7 +320,7 @@ const Index = () => {
             </AtButton>
           </Block>
         )}
-      </ScrollView>
+      </View>
     </View>
   );
 };

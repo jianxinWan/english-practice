@@ -28,3 +28,4 @@ declare const process: {
 
 declare const wx: any;
 declare const RichText: any;
+declare const localStorage: any;

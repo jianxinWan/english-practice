@@ -8,7 +8,7 @@ import {
   AtMessage,
   AtModal
 } from "taro-ui";
-import { RichText, ScrollView, Text, View } from "@tarojs/components";
+import { RichText, Text, View } from "@tarojs/components";
 import Taro, {
   useCallback,
   useEffect,
@@ -17,7 +17,8 @@ import Taro, {
 } from "@tarojs/taro";
 
 import NavBar from "@/components/nav-bar";
-import fetch from "@/utils/fetch";
+import { getStemDetail } from "@/api/index";
+import { getStorage } from "@/utils/localstroage";
 
 interface IExerciseInfo {
   thinking: string;
@@ -62,34 +63,33 @@ const Index = () => {
     const { stem_id } = router.params;
     if (!stem_id) return;
 
-    fetch({
-      url: `http://127.0.0.1:7001/english-practice/api/get-stem/detail/?stem_id=${stem_id}&uid=567876767`
-    }).then(({ data, msg }) => {
-      if (msg !== "success") {
-        return;
-      }
-      const {
-        stem_parent_questions,
-        stem_child_questions,
-        user_answer_info
-      } = data;
-      if (!stem_parent_questions.length || !stem_child_questions.length) return;
-      // 处理选项数组
-      setOptionArr(stem_child_questions);
-      // 父选项
-      const { chapter_id, id, question_id } = stem_parent_questions[0];
-      baseInfo.stem_id = parseInt(stem_id, 10);
-      baseInfo.chapter_id = chapter_id;
-      baseInfo.question_id = question_id;
-      setParentId(id);
-      setExerciseInfo(stem_parent_questions[0]);
-      if (user_answer_info) {
-        const { answer_array } = user_answer_info;
-        console.log("4");
-        setHasAnswer(true);
-        setUserSelect(JSON.parse(answer_array));
-        countScore(stem_child_questions, id);
-      }
+    getStorage("userId").then(({ data }) => {
+      console.log(data, stem_id);
+      getStemDetail(stem_id, data).then((data) => {
+        const {
+          stem_parent_questions,
+          stem_child_questions,
+          user_answer_info
+        } = data;
+        if (!stem_parent_questions.length || !stem_child_questions.length)
+          return;
+        // 处理选项数组
+        setOptionArr(stem_child_questions);
+        // 父选项
+        const { chapter_id, id, question_id } = stem_parent_questions[0];
+        baseInfo.stem_id = parseInt(stem_id, 10);
+        baseInfo.chapter_id = chapter_id;
+        baseInfo.question_id = question_id;
+        setParentId(id);
+        setExerciseInfo(stem_parent_questions[0]);
+        if (user_answer_info) {
+          const { answer_array } = user_answer_info;
+          console.log("4");
+          setHasAnswer(true);
+          setUserSelect(JSON.parse(answer_array));
+          countScore(stem_child_questions, id);
+        }
+      });
     });
   }, []);
 
@@ -179,7 +179,7 @@ const Index = () => {
       <View className="nav-bar">
         <NavBar title="" />
       </View>
-      <ScrollView className="writing-content">
+      <View className="writing-content">
         {title_html && (
           <RichText
             className="at-article__p exercise-wrapper"
@@ -213,9 +213,10 @@ const Index = () => {
         {optionsArr &&
           optionsArr.length &&
           optionsArr.map((item, index) => {
-            const { parent_id, title_html, option_str } = item;
+            const { parent_id, option_str } = item;
+            const tit = item.title_html;
             const { options } = JSON.parse(option_str);
-            if (parentId !== parent_id) return;
+            if (parentId !== parent_id) return null;
             const optionArray = options.map((option) => {
               const { optionText, iD } = option;
               return {
@@ -225,17 +226,18 @@ const Index = () => {
                 disabled: hasAnswer
               };
             });
+            console.log(userSelect[tit.slice(0, 1)]);
             return (
               <View key={`${index}`}>
                 <View>
                   <AtIcon value="tag" size="20" color="#6190e8" />
-                  <Text className="child-tit">{title_html}</Text>
+                  <Text className="child-tit">{tit}</Text>
                 </View>
                 <AtCheckbox
                   options={optionArray}
-                  selectedList={userSelect[title_html.slice(0, 1)] || []}
+                  selectedList={userSelect[tit.slice(0, 1)] || []}
                   onChange={(val: string[]) =>
-                    handleChange(val, title_html.slice(0, 1))
+                    handleChange(val, tit.slice(0, 1))
                   }
                 />
               </View>
@@ -246,7 +248,7 @@ const Index = () => {
             提交答案
           </AtButton>
         )}
-      </ScrollView>
+      </View>
       <AtModal
         isOpened={confirmSubmit}
         title="确认提交"
