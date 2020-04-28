@@ -1,4 +1,4 @@
-import { ComponentType } from 'react'
+import { ComponentType } from "react";
 
 declare module "*.png";
 declare module "*.gif";
@@ -26,5 +26,5 @@ declare const process: {
   };
 };
 
-declare const wx: any
-declare const RichText: ComponentType<any>
+declare const wx: any;
+declare const RichText: any;

@@ -2,27 +2,25 @@ import Taro, { useEffect, useState, useCallback } from "@tarojs/taro";
 import { View } from "@tarojs/components";
 import NavBar from "@/components/nav-bar";
 import { AtCard } from "taro-ui";
-import fetch from "@/utils/fetch";
+import { getTranslation } from "@/api/index";
 
 import "./index.scss";
 
 const Index = () => {
   const [translation, setTranslation] = useState([]);
+
   useEffect(() => {
-    fetch({
-      url: "http://127.0.0.1:7001/english-practice/api/spider/translation/"
-    }).then(({ data, status }) => {
-      if (status === 200) {
-        const { list } = data;
-        setTranslation(list);
-      }
+    getTranslation().then((data) => {
+      setTranslation(data);
     });
   }, []);
+
   const goTranslationDetail = useCallback((show_type_id) => {
     Taro.navigateTo({
       url: `/pages/translation-detail/index?show_type_id=${show_type_id}`
     });
   }, []);
+
   return (
     <View className="translation-wrapper">
       <NavBar />

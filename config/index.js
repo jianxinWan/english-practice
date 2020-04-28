@@ -41,7 +41,9 @@ const config = {
     "@/utils": path.resolve(__dirname, "..", "src/assets/utils"),
     "@/pages": path.resolve(__dirname, "..", "src/pages"),
     "@/images": path.resolve(__dirname, "..", "src/assets/images"),
-    "@/style": path.resolve(__dirname, "..", "src/assets/style")
+    "@/style": path.resolve(__dirname, "..", "src/assets/style"),
+    "@/api": path.resolve(__dirname, "..", "src/api")
+
   },
   defineConstants: {},
   mini: {

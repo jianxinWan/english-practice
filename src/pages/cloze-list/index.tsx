@@ -2,26 +2,24 @@ import Taro, { useEffect, useState, useCallback } from "@tarojs/taro";
 import { View } from "@tarojs/components";
 import NavBar from "@/components/nav-bar";
 import { AtCard } from "taro-ui";
-import fetch from "@/utils/fetch";
+import { getStemList } from "@/api/index";
 import "./index.scss";
 
 const Index = () => {
   const [clozeTest, setClozeTest] = useState([]);
+
   useEffect(() => {
-    fetch({
-      url: "http://127.0.0.1:7001/english-practice/api/get-stem/?type=1"
-    }).then(({ data, msg }) => {
-      if (msg === "success") {
-        console.log(data, msg);
-        setClozeTest(data);
-      }
+    getStemList(1).then((data) => {
+      setClozeTest(data);
     });
   }, []);
+
   const goClozeDetail = useCallback((stem_id) => {
     Taro.navigateTo({
       url: `/pages/cloze-detail/index?stem_id=${stem_id}`
     });
   }, []);
+
   return (
     <View className="cloze-wrapper">
       <NavBar />

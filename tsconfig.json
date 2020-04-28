@@ -25,7 +25,8 @@
       "@/utils/*": ["./src/assets/utils/*"],
       "@/images/*": ["./src/assets/images/*"],
       "@/pages/*": ["./src/pages/*"],
-      "@/hooks/*": ["./src/assets/hooks/*"]
+      "@/hooks/*": ["./src/assets/hooks/*"],
+      "@/api/*": ["./src/api/*"]
     }
   },
   "exclude": ["node_modules", "dist"],

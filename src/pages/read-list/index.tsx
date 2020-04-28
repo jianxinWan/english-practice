@@ -5,17 +5,13 @@ import Taro, { useCallback, useEffect, useState } from "@tarojs/taro";
 import { AtCard } from "taro-ui";
 import NavBar from "@/components/nav-bar";
 import { View } from "@tarojs/components";
-import fetch from "@/utils/fetch";
+import { getStemList } from "@/api/index";
 
 const Index = () => {
-  const [writingTest, setWritingTest] = useState([]);
+  const [readList, setReadList] = useState([]);
   useEffect(() => {
-    fetch({
-      url: "http://127.0.0.1:7001/english-practice/api/get-stem/?type=2"
-    }).then(({ data, msg }) => {
-      if (msg === "success") {
-        setWritingTest(data);
-      }
+    getStemList(2).then((data) => {
+      setReadList(data);
     });
   }, []);
   const goWritingDetail = useCallback((stem_id) => {
@@ -24,11 +20,11 @@ const Index = () => {
     });
   }, []);
   return (
-    <View className="writing-wrapper">
+    <View className="read-list-wrapper">
       <NavBar />
-      {writingTest &&
-        !!writingTest.length &&
-        writingTest.map((item, index) => {
+      {readList &&
+        !!readList.length &&
+        readList.map((item, index) => {
           const { type_str, chapter_name, add_time_str, stem_id } = item;
           return (
             <AtCard
