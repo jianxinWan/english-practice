@@ -40,7 +40,7 @@ interface IState {
   ({ counter }) => ({
     counter
   }),
-  dispatch => ({
+  (dispatch) => ({
     add() {
       dispatch(add());
     },
@@ -82,7 +82,7 @@ class Index extends Component<IProps, IState> {
 
   componentDidHide() {}
 
-  handleChange = index => {
+  handleChange = (index) => {
     this.setState({ current: index });
   };
 

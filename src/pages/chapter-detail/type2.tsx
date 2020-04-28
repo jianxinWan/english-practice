@@ -1,19 +1,9 @@
 import "./index.scss";
 
-import {
-  AtButton,
-  AtCard,
-  AtCheckbox,
-  AtIcon,
-  AtMessage,
-} from "taro-ui";
+import { AtButton, AtCard, AtCheckbox, AtIcon, AtMessage } from "taro-ui";
 import { RichText, Text, View } from "@tarojs/components";
-import Taro, {
-  useCallback,
-  useEffect,
-  useState
-} from "@tarojs/taro";
-import {IProps } from './type1'
+import Taro, { useCallback, useEffect, useState } from "@tarojs/taro";
+import { IProps } from "./type1";
 interface IExerciseInfo {
   thinking: string;
   title_html: string;
@@ -40,7 +30,7 @@ const baseInfo = {
   question_id: 0
 };
 
-const Index = ({ data,toNext,onChange}:IProps) => {
+const Index = ({ data, toNext, onChange }: IProps) => {
   const [exerciseInfo, setExerciseInfo] = useState<IExerciseInfo>();
   const [hasAnswer, setHasAnswer] = useState<boolean>(false);
   const [confirmSubmit, setConfirmSubmit] = useState<boolean>(false);
@@ -75,7 +65,7 @@ const Index = ({ data,toNext,onChange}:IProps) => {
       setUserSelect(JSON.parse(answer_array));
       countScore(stem_child_questions, id);
     }
-  }
+  };
 
   /**
    * 提交答题信息
@@ -94,7 +84,7 @@ const Index = ({ data,toNext,onChange}:IProps) => {
           "content-type": "application/json"
         }
       })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(({ msg, prompt }) => {
         setConfirmSubmit(false);
         Taro.atMessage({
@@ -105,7 +95,7 @@ const Index = ({ data,toNext,onChange}:IProps) => {
   }, []);
 
   useEffect(() => {
-    dealWithData(data)
+    dealWithData(data);
   }, []);
 
   /** 统计成绩 */
@@ -114,7 +104,7 @@ const Index = ({ data,toNext,onChange}:IProps) => {
     let score = 0;
     const rightArr: string[] = [];
     const wrongArr: string[] = [];
-    const arr = option.filter(item => {
+    const arr = option.filter((item) => {
       const { parent_id } = item;
       if (parent_id !== id) {
         return false;
@@ -122,7 +112,7 @@ const Index = ({ data,toNext,onChange}:IProps) => {
         return true;
       }
     });
-    arr.forEach(item => {
+    arr.forEach((item) => {
       const { option_str, title_html } = item;
       const { answerID } = JSON.parse(option_str);
       const index = title_html.slice(0, 1);
@@ -163,10 +153,10 @@ const Index = ({ data,toNext,onChange}:IProps) => {
         {title_html && (
           <RichText
             style={{
-              margin: '.53333rem .64rem 0',
-              color: '#666',
-              fontSize: '.59733rem',
-              lineHeight: '.896rem',
+              margin: ".53333rem .64rem 0",
+              color: "#666",
+              fontSize: ".59733rem",
+              lineHeight: ".896rem"
             }}
             nodes={title_html}
           />
@@ -190,10 +180,10 @@ const Index = ({ data,toNext,onChange}:IProps) => {
             {showThinking && (
               <RichText
                 style={{
-                  margin: '.53333rem .64rem 0',
-                  color: '#666',
-                  fontSize: '.59733rem',
-                  lineHeight: '.896rem',
+                  margin: ".53333rem .64rem 0",
+                  color: "#666",
+                  fontSize: ".59733rem",
+                  lineHeight: ".896rem"
                 }}
                 nodes={thinking}
               />
@@ -231,8 +221,13 @@ const Index = ({ data,toNext,onChange}:IProps) => {
               </View>
             );
           })} */}
-        <AtButton type="primary" onClick={() => { toNext(2)}}>
-            下一题
+        <AtButton
+          type="primary"
+          onClick={() => {
+            toNext(2);
+          }}
+        >
+          下一题
         </AtButton>
       </View>
     </View>

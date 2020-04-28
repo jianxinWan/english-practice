@@ -8,21 +8,21 @@ const Index = () => {
   const [openWrite, setOpenWrite] = useState<boolean>(false);
 
   const handleClozeClick = useCallback(
-    value => {
+    (value) => {
       setOpenCloze(value);
     },
     [openCloze]
   );
 
   const handleReadClick = useCallback(
-    value => {
+    (value) => {
       setOpenRead(value);
     },
     [openRead]
   );
 
   const handleWriteClick = useCallback(
-    value => {
+    (value) => {
       setOpenWrite(value);
     },
     [openWrite]

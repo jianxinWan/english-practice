@@ -1,7 +1,7 @@
 import Taro from "@tarojs/taro";
 
 const defaultMethod = "GET";
-const messageToast = title => {
+const messageToast = (title) => {
   Taro.showToast({
     title,
     icon: "none",
@@ -21,11 +21,11 @@ export default function fetch(options) {
     method,
     data: params
   })
-    .then(response => {
+    .then((response) => {
       const { data } = response;
       return Promise.resolve(data);
     })
-    .catch(errors => {
+    .catch((errors) => {
       const { errMsg } = errors;
       console.log(errMsg);
       if (showErrorToast) {

@@ -17,7 +17,7 @@ const Index = () => {
       }
     });
   }, []);
-  const goClozeDetail = useCallback(stem_id => {
+  const goClozeDetail = useCallback((stem_id) => {
     Taro.navigateTo({
       url: `/pages/cloze-detail/index?stem_id=${stem_id}`
     });

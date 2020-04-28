@@ -94,7 +94,7 @@ const Index = () => {
           "content-type": "application/json"
         }
       })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(({ msg, prompt }) => {
         fetchInfo();
         setConfirmSubmit(false);
@@ -109,7 +109,7 @@ const Index = () => {
    * 切换提交方式卡片
    */
   const handleChange = useCallback(
-    item => {
+    (item) => {
       setTabIndex(item);
     },
     [tabIndex]
@@ -158,7 +158,7 @@ const Index = () => {
           {tabIndex === 1 && (
             <AtImagePicker
               files={imageFiles}
-              onChange={files => setImageFiles(files)}
+              onChange={(files) => setImageFiles(files)}
               onFail={() =>
                 Taro.atMessage({
                   message: "上传出错！请稍后再试",

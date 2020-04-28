@@ -37,10 +37,10 @@ class App extends Component {
       "pages/writing-list/index",
       "pages/writing-detail/index",
       "pages/translation-detail/index",
-      "pages/translation-list/index",    
+      "pages/translation-list/index",
       "pages/chapter-list/index",
       "pages/chapter-detail/index",
-      "pages/exam-list/index",
+      "pages/exam-list/index"
     ],
     window: {
       backgroundTextStyle: "light",

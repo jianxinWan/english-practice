@@ -1,14 +1,5 @@
-import Taro, {
-  useEffect,
-  useState,
-  useCallback
-} from "@tarojs/taro";
-import {
-  View,
-  RichText,
-  Block,
-  Text,
-} from "@tarojs/components";
+import Taro, { useEffect, useState, useCallback } from "@tarojs/taro";
+import { View, RichText, Block, Text } from "@tarojs/components";
 import {
   AtRadio,
   AtIcon,
@@ -17,7 +8,6 @@ import {
   AtCard,
   AtAccordion
 } from "taro-ui";
-
 
 interface IExerciseInfo {
   thinking: string;
@@ -42,7 +32,6 @@ interface IAnswerCollect {
   errorArray: number[];
 }
 
-
 const baseInfo = {
   stem_id: 0,
   chapter_id: 0,
@@ -55,13 +44,13 @@ const initAnswerCollect = {
 };
 
 export interface IProps {
-  data: any
-  finishCallback: () => void
-  onChange: (current:number,ans: IAnswerItem[]) => void
-  toNext: (current:number) => void
+  data: any;
+  finishCallback: () => void;
+  onChange: (current: number, ans: IAnswerItem[]) => void;
+  toNext: (current: number) => void;
 }
 
-const Type1 = ({ data,toNext,onChange}:IProps) => {
+const Type1 = ({ data, toNext, onChange }: IProps) => {
   const [exerciseInfo, setExerciseInfo] = useState<IExerciseInfo>();
   const [optionInfo, setOptionInfo] = useState<IOptionInfoItem[]>([]);
   const [answer, setAnswer] = useState<IAnswerItem[]>([]);
@@ -79,7 +68,7 @@ const Type1 = ({ data,toNext,onChange}:IProps) => {
       user_answer_info,
       stem_id
     } = data;
-    console.log(stem_parent_questions[0])
+    console.log(stem_parent_questions[0]);
     if (!stem_parent_questions.length || !stem_child_questions.length) return;
     try {
       const initAnswer: IAnswerItem[] = [];
@@ -98,16 +87,16 @@ const Type1 = ({ data,toNext,onChange}:IProps) => {
       baseInfo.chapter_id = chapter_id;
       baseInfo.question_id = question_id;
       setAnswer(initAnswer);
-    
+
       if (user_answer_info) {
         const { answer_array } = user_answer_info;
         setAnswer(JSON.parse(answer_array));
         setHasAnswer(true);
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-  }
+  };
 
   // 统计成绩
   const calculateScore = useCallback(() => {
@@ -154,27 +143,27 @@ const Type1 = ({ data,toNext,onChange}:IProps) => {
   }, [calculateScore]);
 
   useEffect(() => {
-    dealWithData(data)
+    dealWithData(data);
   }, []);
 
   useEffect(() => {
-    onChange(1,answer)
-  },[answer])
+    onChange(1, answer);
+  }, [answer]);
 
   if (!exerciseInfo) return null;
   const { title_html, thinking } = exerciseInfo;
 
   return (
-    <View className="cloze-detail-wrapper" >
+    <View className="cloze-detail-wrapper">
       <AtMessage />
       <View className="cloze-content">
         {title_html && (
           <RichText
             style={{
-              margin: '.53333rem .64rem 0',
-              color: '#666',
-              fontSize: '.59733rem',
-              lineHeight: '.896rem',
+              margin: ".53333rem .64rem 0",
+              color: "#666",
+              fontSize: ".59733rem",
+              lineHeight: ".896rem"
             }}
             nodes={title_html}
           />
@@ -198,10 +187,10 @@ const Type1 = ({ data,toNext,onChange}:IProps) => {
             >
               <RichText
                 style={{
-                  margin: '.53333rem .64rem 0',
-                  color: '#666',
-                  fontSize: '.59733rem',
-                  lineHeight: '.896rem',
+                  margin: ".53333rem .64rem 0",
+                  color: "#666",
+                  fontSize: ".59733rem",
+                  lineHeight: ".896rem"
                 }}
                 nodes={thinking}
               />
@@ -214,7 +203,7 @@ const Type1 = ({ data,toNext,onChange}:IProps) => {
             const { option_str } = item;
             const { options, answerID } = JSON.parse(option_str);
             let answerValue = "";
-            const optionArray = options.map(option => {
+            const optionArray = options.map((option) => {
               const { optionText, iD } = option;
               if (answerID === iD) {
                 answerValue = optionText;
@@ -271,7 +260,12 @@ const Type1 = ({ data,toNext,onChange}:IProps) => {
           })}
         {!hasAnswer && (
           <Block>
-            <AtButton type="primary" onClick={() => { toNext(1)}}>
+            <AtButton
+              type="primary"
+              onClick={() => {
+                toNext(1);
+              }}
+            >
               下一题
             </AtButton>
           </Block>

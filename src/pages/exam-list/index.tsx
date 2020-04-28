@@ -17,7 +17,7 @@ const Index = () => {
       }
     });
   }, []);
-  const goWritingDetail = useCallback(stem_list_id => {
+  const goWritingDetail = useCallback((stem_list_id) => {
     Taro.navigateTo({
       url: `/pages/chapter-detail/index?stem_list_id=${stem_list_id}`
     });
@@ -29,7 +29,7 @@ const Index = () => {
         !!chapterList.length &&
         chapterList.map((item, index) => {
           const { type_str, chapter_name, add_time_str, stem_list_id } = item;
-          console.log(item)
+          console.log(item);
           return (
             <AtCard
               onClick={() => goWritingDetail(stem_list_id)}

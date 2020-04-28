@@ -10,15 +10,15 @@ const Index = () => {
   const [translation, setTranslation] = useState([]);
   useEffect(() => {
     fetch({
-      url: "http://127.0.0.1:7001/english-practice/api/spider/translation/",
-    }).then(({ data,status}) => {
+      url: "http://127.0.0.1:7001/english-practice/api/spider/translation/"
+    }).then(({ data, status }) => {
       if (status === 200) {
-        const { list } = data
-        setTranslation(list)
+        const { list } = data;
+        setTranslation(list);
       }
     });
   }, []);
-  const goTranslationDetail = useCallback(show_type_id => {
+  const goTranslationDetail = useCallback((show_type_id) => {
     Taro.navigateTo({
       url: `/pages/translation-detail/index?show_type_id=${show_type_id}`
     });
@@ -29,7 +29,7 @@ const Index = () => {
       {translation &&
         !!translation.length &&
         translation.map((item, index) => {
-          const { add_time_str, showTypeID ,showTypeName} = item;
+          const { add_time_str, showTypeID, showTypeName } = item;
           return (
             <AtCard
               onClick={() => goTranslationDetail(showTypeID)}

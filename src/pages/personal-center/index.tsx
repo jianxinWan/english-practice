@@ -9,8 +9,8 @@ const Index = () => {
   useEffect(() => {
     if (isWeixin) {
       Taro.getUserInfo().then((res) => {
-        console.log(res)
-      })
+        console.log(res);
+      });
     }
   }, []);
   return (

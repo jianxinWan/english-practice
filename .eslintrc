@@ -1,5 +1,5 @@
 {
-  "extends": ["taro", "plugin:@typescript-eslint/recommended"],
+  "extends": ["taro", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
   "parser": "@typescript-eslint/parser",
   "rules": {
     "no-unused-vars": ["error", {
@@ -22,7 +22,8 @@
       }
     }],
     "@typescript-eslint/explicit-function-return-type": 0,
-    "@typescript-eslint/no-empty-function": ["warn"]
+    "@typescript-eslint/no-empty-function": ["warn"],
+    "prettier/prettier": "error"
   },
   "parserOptions": {
     "ecmaFeatures": {

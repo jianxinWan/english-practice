@@ -21,7 +21,7 @@ import fetch from "@/utils/fetch";
 interface IExerciseInfo {
   thinking: string;
   titleHTML: string;
-  answer: string
+  answer: string;
 }
 
 const baseInfo = {
@@ -44,17 +44,17 @@ const Index = () => {
     if (!show_type_id) return;
     fetch({
       url: `http://127.0.0.1:7001/english-practice/api/spider/translation/detail/?show_type_id=${show_type_id}&uid=567876767`
-    }).then(({ data,status}) => {
+    }).then(({ data, status }) => {
       if (status !== 200) {
         return;
       }
-      const { quesNormalData,user_answer_info } = data
-      const { jsonStr } = quesNormalData[0]
+      const { quesNormalData, user_answer_info } = data;
+      const { jsonStr } = quesNormalData[0];
       baseInfo.stem_id = parseInt(show_type_id, 10);
-      setExerciseInfo(JSON.parse(jsonStr))
-      console.log(user_answer_info)
+      setExerciseInfo(JSON.parse(jsonStr));
+      console.log(user_answer_info);
       if (user_answer_info) {
-        console.log(user_answer_info)
+        console.log(user_answer_info);
         const { answer_array } = user_answer_info;
         const answer = JSON.parse(answer_array);
         setTextVal(answer[0].value);
@@ -90,20 +90,20 @@ const Index = () => {
       }
     }).then(({ msg, prompt }) => {
       setConfirmSubmit(false);
-      console.log(msg, prompt)
-        // fetchInfo();
-        // Taro.atMessage({
-        //   message: prompt,
-        //   type: msg
-        // });
-      });
+      console.log(msg, prompt);
+      // fetchInfo();
+      // Taro.atMessage({
+      //   message: prompt,
+      //   type: msg
+      // });
+    });
   }, [fetchInfo, textVal, imageFiles]);
 
   /**
    * 切换提交方式卡片
    */
   const handleChange = useCallback(
-    item => {
+    (item) => {
       setTabIndex(item);
     },
     [tabIndex]
@@ -122,7 +122,7 @@ const Index = () => {
       <View className="nav-bar">
         <NavBar title="" />
       </View>
-      <View className="writing-content" style={{padding: "0 5px 30px"}}>
+      <View className="writing-content" style={{ padding: "0 5px 30px" }}>
         {titleHTML && (
           <RichText
             className="at-article__p exercise-wrapper"
@@ -151,7 +151,7 @@ const Index = () => {
           {tabIndex === 1 && (
             <AtImagePicker
               files={imageFiles}
-              onChange={files => setImageFiles(files)}
+              onChange={(files) => setImageFiles(files)}
               onFail={() =>
                 Taro.atMessage({
                   message: "上传出错！请稍后再试",
@@ -161,16 +161,16 @@ const Index = () => {
             />
           )}
         </View>
-        {hasAnswer && 
+        {hasAnswer && (
           <AtAccordion
-          title="查看解析："
-          open={showThinking}
-          onClick={(value: any) => setShowThinking(value)}
-        >
-          <RichText className="at-article__p" nodes={answer} />
-        </AtAccordion>
-        }
-      
+            title="查看解析："
+            open={showThinking}
+            onClick={(value: any) => setShowThinking(value)}
+          >
+            <RichText className="at-article__p" nodes={answer} />
+          </AtAccordion>
+        )}
+
         {!hasAnswer && (
           <AtButton type="primary" onClick={() => setConfirmSubmit(true)}>
             提交答案

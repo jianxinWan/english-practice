@@ -110,7 +110,7 @@ const Index = () => {
           "content-type": "application/json"
         }
       })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(({ msg, prompt }) => {
         fetchInfo();
         setConfirmSubmit(false);
@@ -131,7 +131,7 @@ const Index = () => {
     let score = 0;
     const rightArr: string[] = [];
     const wrongArr: string[] = [];
-    const arr = option.filter(item => {
+    const arr = option.filter((item) => {
       const { parent_id } = item;
       if (parent_id !== id) {
         return false;
@@ -139,7 +139,7 @@ const Index = () => {
         return true;
       }
     });
-    arr.forEach(item => {
+    arr.forEach((item) => {
       const { option_str, title_html } = item;
       const { answerID } = JSON.parse(option_str);
       const index = title_html.slice(0, 1);
@@ -216,7 +216,7 @@ const Index = () => {
             const { parent_id, title_html, option_str } = item;
             const { options } = JSON.parse(option_str);
             if (parentId !== parent_id) return;
-            const optionArray = options.map(option => {
+            const optionArray = options.map((option) => {
               const { optionText, iD } = option;
               return {
                 label: optionText,

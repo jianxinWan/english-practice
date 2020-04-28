@@ -17,7 +17,7 @@ const Index = () => {
       }
     });
   }, []);
-  const goWritingDetail = useCallback(stem_id => {
+  const goWritingDetail = useCallback((stem_id) => {
     Taro.navigateTo({
       url: `/pages/writing-detail/index?stem_id=${stem_id}`
     });

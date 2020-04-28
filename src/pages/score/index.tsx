@@ -1,11 +1,10 @@
-import Taro, { useEffect } from '@tarojs/taro'
-import { View } from '@tarojs/components'
-
+import Taro, { useEffect } from "@tarojs/taro";
+import { View } from "@tarojs/components";
 
 const Index = () => {
   useEffect(() => {
-    console.log('special')
-  }, [])
+    console.log("special");
+  }, []);
   return (
     <View>
       <View>成绩1</View>
@@ -14,7 +13,7 @@ const Index = () => {
       <View>成绩4</View>
       <View>成绩5</View>
     </View>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

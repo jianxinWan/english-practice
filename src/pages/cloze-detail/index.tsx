@@ -187,7 +187,7 @@ const Index = () => {
           "content-type": "application/json"
         }
       })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(({ msg, prompt }) => {
         fetchInfo();
         Taro.atMessage({
@@ -246,7 +246,7 @@ const Index = () => {
             const { option_str } = item;
             const { options, answerID } = JSON.parse(option_str);
             let answerValue = "";
-            const optionArray = options.map(option => {
+            const optionArray = options.map((option) => {
               const { optionText, iD } = option;
               if (answerID === iD) {
                 answerValue = optionText;
