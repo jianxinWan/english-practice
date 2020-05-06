@@ -44,7 +44,7 @@ const Index = () => {
               });
             }}
             title="2018年考研英语二考前押题（四）"
-            note="得分：0 正确率：0%"
+            note="得分：20 正确率：20%"
             arrow="right"
           />
         </AtList>
