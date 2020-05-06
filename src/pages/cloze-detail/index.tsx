@@ -108,6 +108,7 @@ const Index = () => {
         baseInfo.chapter_id = chapter_id;
         baseInfo.question_id = question_id;
         setAnswer(initAnswer);
+        console.log(initAnswer);
         setExerciseInfo(stem_parent_questions[0]);
         setOptionInfo(stem_child_questions);
         if (user_answer_info) {
@@ -147,25 +148,25 @@ const Index = () => {
    * 选项点击
    */
 
-  const handleOptionClick = useCallback(
-    (optionValue, index, item) => {
-      const { iD } = item;
-      const temp: IAnswerItem = {
-        priority: index,
-        value: optionValue,
-        iD: iD
-      };
-      setFinishPercent(finishPercent + dial);
-      // 取消选中
-      if (optionValue === answer[index].value) {
-        temp.value = "";
-        setFinishPercent(finishPercent - dial);
-      }
-      setAnswer([...answer.slice(0, index), temp, ...answer.slice(index + 1)]);
-    },
-    [answer, finishPercent]
-  );
-
+  const handleOptionClick = (optionValue, index, arr) => {
+    const info = arr.filter((item) => {
+      const { value } = item;
+      return optionValue === value;
+    });
+    const temp: IAnswerItem = {
+      priority: index,
+      value: optionValue,
+      iD: info[0].iD
+    };
+    setFinishPercent(finishPercent + dial);
+    // 取消选中
+    if (optionValue === answer[index].value) {
+      temp.value = "";
+      setFinishPercent(finishPercent - dial);
+    }
+    setAnswer([...answer.slice(0, index), temp, ...answer.slice(index + 1)]);
+    console.log(answer);
+  };
   /**
    * 提交答题信息
    */
@@ -245,6 +246,8 @@ const Index = () => {
                 disabled: hasAnswer
               };
             });
+            // console.log(answerID, answer[index].iD);
+            // console.log("optionArray", optionArray);
             return (
               <View key={`${index}`}>
                 <View className="top-card">
@@ -281,9 +284,9 @@ const Index = () => {
                 <AtRadio
                   options={optionArray}
                   value={answer[index].value}
-                  onClick={(optionValue: string, optionItem: any) =>
-                    handleOptionClick(optionValue, index, optionItem)
-                  }
+                  onClick={(optionValue: string) => {
+                    handleOptionClick(optionValue, index, optionArray);
+                  }}
                 />
               </View>
             );

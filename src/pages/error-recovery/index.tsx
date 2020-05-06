@@ -38,8 +38,13 @@ const Index = () => {
       >
         <AtList hasBorder={false}>
           <AtListItem
-            title="2018年考研英语一考前押题（五）"
-            note="得分：5 正确率：5%"
+            onClick={() => {
+              Taro.navigateTo({
+                url: `/pages/cloze-detail/index?stem_id=4725`
+              });
+            }}
+            title="2018年考研英语二考前押题（四）"
+            note="得分：0 正确率：0%"
             arrow="right"
           />
         </AtList>

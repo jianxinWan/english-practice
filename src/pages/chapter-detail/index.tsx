@@ -223,7 +223,9 @@ const Index = () => {
         confirmText="确认"
         onClose={() => setConfirmSubmit(false)}
         onCancel={() => setConfirmSubmit(false)}
-        onConfirm={() => console.log("submit")}
+        onConfirm={() => {
+          setConfirmSubmit(false);
+        }}
       />
     </View>
   );

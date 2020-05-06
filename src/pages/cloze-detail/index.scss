@@ -5,6 +5,17 @@
   flex-direction: column;
   justify-content: space-between;
 
+
+  .exercise-wrapper {
+    font-size: 33px;
+    line-height: 44px;
+    text-indent: 60px;
+    // word-wrap: break-word;
+    // text-align: justify;
+    // text-justify: inter-ideograph;
+    // float: left;
+  }
+
   .nav-bar {
     flex-shrink: 0;
   }
@@ -13,6 +24,11 @@
     flex: 1;
     overflow: scroll;
     -webkit-overflow-scrolling: touch;
+    padding: 0 30px;
+    word-wrap: break-word;
+    text-align: justify;
+    text-justify: inter-ideograph;
+    float: left;
   }
 
   .top-card {

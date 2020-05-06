@@ -13,7 +13,10 @@
     flex: 1;
     overflow: scroll;
     -webkit-overflow-scrolling: touch;
-
+    word-wrap: break-word;
+    text-align: justify;
+    text-justify: inter-ideograph;
+    float: left;
 
     .child-tit {
       font-size: 30px;
