@@ -43,6 +43,17 @@ const Index = ({ data, toNext, onChange }: IProps) => {
   );
 
   useEffect(() => {
+    onChange(4, [
+      {
+        value: textVal
+      },
+      {
+        value: imageFiles
+      }
+    ]);
+  }, [onChange]);
+
+  useEffect(() => {
     const { stem_parent_questions, user_answer_info } = data;
     if (!stem_parent_questions && !stem_parent_questions.length) return;
     setExerciseInfo(stem_parent_questions[0]);

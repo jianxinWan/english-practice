@@ -46,7 +46,7 @@ const initAnswerCollect = {
 export interface IProps {
   data: any;
   finishCallback: () => void;
-  onChange: (current: number, ans: IAnswerItem[]) => void;
+  onChange: (current: number, ans: any) => void;
   toNext: (current: number) => void;
 }
 

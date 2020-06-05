@@ -28,7 +28,7 @@ const baseInfo = {
   question_id: 0
 };
 
-const Index = ({ data, toNext, onChange }: IProps) => {
+const Index = ({ data, onChange }: IProps) => {
   const [exerciseInfo, setExerciseInfo] = useState<IExerciseInfo>();
   const [hasAnswer, setHasAnswer] = useState<boolean>(false);
   const [textVal, setTextVal] = useState<string>("");
@@ -62,6 +62,17 @@ const Index = ({ data, toNext, onChange }: IProps) => {
     }
   }, []);
 
+  useEffect(() => {
+    onChange(5, [
+      {
+        value: textVal
+      },
+      {
+        value: imageFiles
+      }
+    ]);
+  }, [onChange]);
+
   if (!exerciseInfo) return null;
   const { title_html } = exerciseInfo;
 
@@ -94,7 +105,7 @@ const Index = ({ data, toNext, onChange }: IProps) => {
               count={true}
               maxLength={2000}
               value={textVal}
-              onChange={(event: any) => setTextVal(event.target.value)}
+              onChange={(val: string) => setTextVal(val)}
               placeholder="Answer here"
             />
           )}

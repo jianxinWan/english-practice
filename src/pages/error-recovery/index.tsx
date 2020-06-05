@@ -3,8 +3,8 @@ import { View } from "@tarojs/components";
 import { AtAccordion, AtList, AtListItem } from "taro-ui";
 
 const Index = () => {
-  const [openCloze, setOpenCloze] = useState<boolean>(true);
-  const [openRead, setOpenRead] = useState<boolean>(false);
+  const [openCloze, setOpenCloze] = useState<boolean>(false);
+  const [openRead, setOpenRead] = useState<boolean>(true);
   const [openWrite, setOpenWrite] = useState<boolean>(false);
 
   const handleClozeClick = useCallback(
@@ -70,6 +70,20 @@ const Index = () => {
       </AtAccordion>
       <AtAccordion
         title="作文"
+        icon={{ value: "message", size: "15" }}
+        open={openWrite}
+        onClick={handleWriteClick}
+      >
+        <AtList hasBorder={false}>
+          <AtListItem
+            title="2018年考研英语一考前押题（五）"
+            note=""
+            arrow="right"
+          />
+        </AtList>
+      </AtAccordion>
+      <AtAccordion
+        title="翻译"
         icon={{ value: "message", size: "15" }}
         open={openWrite}
         onClick={handleWriteClick}

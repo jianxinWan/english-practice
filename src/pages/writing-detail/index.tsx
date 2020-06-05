@@ -37,6 +37,10 @@ const Index = () => {
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [imageFiles, setImageFiles] = useState<any>([]);
   const [confirmSubmit, setConfirmSubmit] = useState<boolean>(false);
+
+  /**
+   * 获取题目详细信息
+   */
   const fetchInfo = useCallback(() => {
     const { stem_id } = router.params;
     if (!stem_id) return;
@@ -66,7 +70,7 @@ const Index = () => {
    */
   const handleSubmit = useCallback(() => {
     submitAnswer({
-      uid: "567876767",
+      uid: userId,
       answer_array: [
         {
           type: "text",

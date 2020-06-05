@@ -9,10 +9,31 @@
     flex-shrink: 0;
   }
 
+  .exercise-wrapper {
+    font-size: 33px;
+    line-height: 44px;
+    text-indent: 60px;
+  }
+
+  .at-card {
+    background-color: rgb(245, 245, 245);
+  }
+
+  .nav-bar {
+    flex-shrink: 0;
+  }
+
+  .see-thinking {
+    width: 90vw;
+    height: 60px;
+    margin: 20px auto;
+  }
+
   .writing-content {
     flex: 1;
     overflow: scroll;
     -webkit-overflow-scrolling: touch;
+    padding: 0 30px;
     word-wrap: break-word;
     text-align: justify;
     text-justify: inter-ideograph;

@@ -8,16 +8,25 @@ import "./index.scss";
 
 const Index = () => {
   const [writingTest, setWritingTest] = useState([]);
+
+  /**
+   * 获取题目列表信息  type=5 翻译
+   */
   useEffect(() => {
     getStemList(5).then((data) => {
       setWritingTest(data);
     });
   }, []);
+
+  /**
+   * 用户点击题目，根据id跳转对应详情页
+   */
   const goWritingDetail = useCallback((stem_id) => {
     Taro.navigateTo({
       url: `/pages/writing-detail/index?stem_id=${stem_id}`
     });
   }, []);
+
   return (
     <View className="writing-wrapper">
       <NavBar />

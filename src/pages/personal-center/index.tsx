@@ -17,10 +17,8 @@ const Index = () => {
     <View>
       <View className="personal-wrapper">
         <View className="cover-wrapper">
-          <Image className="cover" src={require("@/images/personal-bg.jpg")} />
+          <View className="avatar" />
         </View>
-        <AtAvatar className="avatar" circle size="large" image=""></AtAvatar>
-
         <View className="user-info">
           <View className="base">
             <View className="left">
@@ -33,8 +31,9 @@ const Index = () => {
           </View>
           <View className="list-wrapper">
             <AtList>
-              <AtListItem title="模块1" />
-              <AtListItem title="模块2" />
+              <AtListItem title="手机号：152****4355" />
+              <AtListItem title="邮箱：2582152019@qq.com" />
+              <AtListItem title="个性签名：越努力越幸运" />
             </AtList>
           </View>
         </View>

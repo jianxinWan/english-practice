@@ -7,24 +7,31 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 300px;
+    height: 400px;
     overflow-y: hidden;
+    background-image: url('../../assets/images/personal-bg2.jpg');
+    background-size: auto 120%;
+    background-position: 50% -100px;
+    background-repeat: no-repeat;
 
-    .cover {
-      width: 100%;
-      height: auto;
-      filter: blur(10);
+
+    .avatar {
+      position: absolute;
+      top: 240px;
+      left: 50px;
+      width: 100px;
+      height: 100px;
+      background-image: url('../../assets/images/avatar.jpg');
+      background-size: 100% 100%;
+      border-radius: 50%;
+      background-repeat: no-repeat;
     }
+
   }
 
-  .avatar {
-    position: absolute;
-    top: 240px;
-    left: 50px;
-  }
 
   .user-info {
-    padding-top: 300px;
+    padding-top: 350px;
     overflow: hidden;
 
     .base {
