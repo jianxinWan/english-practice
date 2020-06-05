@@ -57,13 +57,13 @@ const Index = () => {
       >
         <AtList hasBorder={false}>
           <AtListItem
-            title="2018年考研英语一考前押题（五）"
-            note="得分：0 正确率：0%"
-            arrow="right"
-          />
-          <AtListItem
+            onClick={() => {
+              Taro.navigateTo({
+                url: `/pages/read-detail/index?stem_id=4726`
+              });
+            }}
             title="2018年考研英语一考前押题（四）"
-            note="得分：40 正确率：40%"
+            note="得分：75 正确率：75%"
             arrow="right"
           />
         </AtList>
@@ -76,7 +76,12 @@ const Index = () => {
       >
         <AtList hasBorder={false}>
           <AtListItem
-            title="2018年考研英语一考前押题（五）"
+            onClick={() => {
+              Taro.navigateTo({
+                url: `/pages/writing-detail/index?stem_id=4729`
+              });
+            }}
+            title="2018年考研英语二考前押题（四）"
             note=""
             arrow="right"
           />
@@ -88,13 +93,7 @@ const Index = () => {
         open={openWrite}
         onClick={handleWriteClick}
       >
-        <AtList hasBorder={false}>
-          <AtListItem
-            title="2018年考研英语一考前押题（五）"
-            note=""
-            arrow="right"
-          />
-        </AtList>
+        <AtList hasBorder={false}></AtList>
       </AtAccordion>
     </View>
   );

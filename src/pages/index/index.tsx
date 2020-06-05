@@ -92,7 +92,7 @@ class Index extends Component<IProps, IState> {
       <View className="index">
         <View className="content" id="content">
           {current == 0 && <Special />}
-          {current == 1 && <ErrorRecovery />}
+          {current == 1 && <Score />}
           {current == 2 && <ErrorRecovery />}
           {current == 3 && <PersonalCenter />}
         </View>
